@@ -4,7 +4,7 @@ public class Main {
 
     public static void main(String[] args) {
         try{
-            File folder = new File("C:/Users/KS/Documents");
+            File folder = new File("C:\\Users\\KS\\Documents\\Манн Иванов Фербер\\");
             System.out.println(  convertLength( directorySize(folder) ) );
         } catch (NullPointerException exception){
             System.out.println(exception.getStackTrace());
@@ -19,6 +19,7 @@ public class Main {
     public static long directorySize(File folder){
 
         if (!folder.isDirectory()) {
+            System.out.println(folder.getAbsolutePath());
             return folder.length();
         } else {
             File[] fileArray = folder.listFiles();
