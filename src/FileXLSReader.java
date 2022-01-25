@@ -1,12 +1,25 @@
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Date;
+import java.util.List;
 
 public class FileXLSReader {
     public static void main(String[] args){
-        File file = new File("C:\\Users\\KS\\Documents\\JAVA Lessons\\[Skillbox] Java-разработчик (2020)\\09.Работа с файлами и сетью\\9.9 Домашняя работа 9.3\\movementList");
-        System.out.println(file.getName());
-
+        File file = new File("C:\\Users\\KS\\IdeaProjects\\SkillBoxLessons\\Data\\movementList.csv");
+        System.out.println(file.getPath());
+        StringBuilder bilder = new StringBuilder();
+        try{
+            List<String> accountList = Files.readAllLines(Paths.get(file.getPath()));
+            accountList.forEach(line -> bilder.append(line+"\n"));
+        }
+        catch (IOException ex){
+            System.out.println(ex.toString());
+        }
+        System.out.println();
     }
+
 
     public class AccountOperation{
         String typeAccount;
