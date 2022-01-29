@@ -2,80 +2,97 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 public class FileXLSReader {
-    public static void main(String[] args){
-        File file = new File("C:\\Users\\KS\\IdeaProjects\\SkillBoxLessons\\Data\\movementList.csv");
+    public static void main(String[] args) {
+        File file = new File("Data\\movementList.csv");
         System.out.println(file.getPath());
         StringBuilder bilder = new StringBuilder();
-        try{
-            List<String> accountList = Files.readAllLines(Paths.get(file.getPath()));
-            accountList.forEach(line -> bilder.append(line+"\n"));
-        }
-        catch (IOException ex){
+        List<String> accountList = null;
+        List<AccountOperation> bankList = new ArrayList<>();
+        try {
+            accountList = Files.readAllLines(Paths.get(file.getPath()));
+            accountList.forEach(line -> bilder.append(line + "\n"));
+
+            for (String operation: accountList) {
+                String[] fragments = operation.split(",");
+
+
+                for (int i = 0; i< fragments.length; i++){
+                    if (IsColumnPart(fragments[i])){
+                        fragments[i-1]+=("."+fragments[i]);
+                        fragments[i-1]=fragments[i-1].substring(1,fragments[i-1].length()-1);
+
+                    }
+                }
+
+               /* if(fragments.length != 8) {
+                    for (String s: fragments) {
+                        System.out.println(IsColumnPart(s) + "  " + s);
+                    }
+
+                    continue;
+                }*/
+                bankList.add(new AccountOperation(fragments[0],
+                                  fragments[1],
+                                  fragments[2],
+                                  fragments[3],
+                                  fragments[4],
+                                  fragments[5],
+                                  fragments[6],
+                                  fragments[7]));
+
+            }
+            bankList.remove(0);
+        } catch (IOException ex) {
             System.out.println(ex.toString());
         }
-        System.out.println();
+
+        System.out.println("Парсинг окончен");
+        double sumPlus =0;
+        double sumMinus =0;
+        for (AccountOperation aO: bankList) {
+            sumPlus+=Double.parseDouble(aO.changeAccountPlus);
+            sumMinus+=Double.parseDouble(aO.changeAccountMinus);
+
+        }
+        System.out.println("Сумма расходов: " +sumMinus);
+        System.out.println("Сумма доходов: " +sumPlus);
+
     }
 
+    private static boolean IsColumnPart(String text) {
+        String trimText = text.trim();
+        //Если в тексте одна ковычка и текст на нее заканчивается значит это часть предыдущей колонки
+        return trimText.indexOf("\"") == trimText.lastIndexOf("\"") && trimText.endsWith("\"");
+    }
 
-    public class AccountOperation{
-        String typeAccount;
-        long idAccount;
-        String currencyAccount;
-        Date  dateOperation;
-        String hashOperation;
-        double changeAccount;
+    public static class AccountOperation{
 
-        public String getTypeAccount() {
-            return typeAccount;
-        }
+        String typeAccount; //Тип счёта
+        String idAccount; // Номер счета
+        String currencyAccount; // Валюта
+        String dateOperation; //Дата операции
+        String hashOperation; //Референс проводки
+        String descriptionOperation; //Описание операции
+        String changeAccountPlus; //Приход
+        String changeAccountMinus; //Расход
 
-        public long getIdAccount() {
-            return idAccount;
-        }
-
-        public String getCurrencyAccount() {
-            return currencyAccount;
-        }
-
-        public Date getDateOperation() {
-            return dateOperation;
-        }
-
-        public String getHashOperation() {
-            return hashOperation;
-        }
-
-        public double getChangeAccount() {
-            return changeAccount;
-        }
-
-        public void setTypeAccount(String typeAccount) {
+        public AccountOperation(String typeAccount, String idAccount, String currencyAccount, String dateOperation,
+                                String hashOperation, String descriptionOperation, String changeAccountPlus, String changeAccountMinus) {
             this.typeAccount = typeAccount;
-        }
-
-        public void setIdAccount(long idAccount) {
             this.idAccount = idAccount;
-        }
-
-        public void setCurrencyAccount(String currencyAccount) {
             this.currencyAccount = currencyAccount;
-        }
-
-        public void setDateOperation(Date dateOperation) {
             this.dateOperation = dateOperation;
-        }
-
-        public void setHashOperation(String hashOperation) {
+            this.descriptionOperation = descriptionOperation;
             this.hashOperation = hashOperation;
+            this.changeAccountPlus = changeAccountPlus;
+            this.changeAccountMinus = changeAccountMinus;
         }
 
-        public void setChangeAccount(double changeAccount) {
-            this.changeAccount = changeAccount;
-        }
+
     }
 
 }
