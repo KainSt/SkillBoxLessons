@@ -17,7 +17,7 @@ public class LentaHTMLParser {
     public static void main(String[] args) throws IOException {
         String htmlFile = parseFile("Data/lenta.html");
        // Document doc = Jsoup.parse(htmlFile);
-        Document doc = Jsoup.connect("https://vk.com/vk.drug").get();
+        Document doc = Jsoup.connect("https://www.sports.ru").get();
         Elements elements = doc.select("img");
         List<String> urlList = new ArrayList<>();
         elements.forEach(element -> {
